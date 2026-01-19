@@ -6,7 +6,7 @@ from storage import NotebookStorage
 class Menu:
     def __init__(self):
         notebookstorage = NotebookStorage()
-        self.notebook = notebookstorage.from_file('notatki.csv')
+        self.notebook = notebookstorage.from_file('notebook.csv')
 
     def run(self):
         while True:
@@ -59,7 +59,7 @@ class Menu:
                         except ValueError:
                             print('Incorrect ID')
                     elif choice == 6:
-                        NotebookStorage.to_file(self.notebook,'notatki.csv')
+                        NotebookStorage.to_file(self.notebook,'notebook.csv')
                     elif choice == 0:
                         print('Good bye!!!')
                         break
