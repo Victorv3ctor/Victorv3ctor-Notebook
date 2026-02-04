@@ -9,7 +9,7 @@ class NotebookStorage:
         with open(filename) as file:
             reader = csv.DictReader(file)
             for row in reader:
-                note = Note(row['id'], row['title'], row['description'], row['date'], row['tags'])
+                note = Note(row['id'], row['title'], row['description'], row['date'], row['tag'])
                 notebook.add(note)
         return notebook
             #notebook storage
@@ -17,7 +17,7 @@ class NotebookStorage:
     @staticmethod
     def to_file(notebook, filename):
         with open(filename, 'w') as file:
-            writer = csv.DictWriter(file,fieldnames = ['id', 'title', 'description', 'date', 'tags'])
+            writer = csv.DictWriter(file,fieldnames = ['id', 'title', 'description', 'date', 'tag'])
             writer.writeheader()
             for note in notebook.notes:
-                writer.writerow(note.dict())
+                writer.writerow(note.to_dict())

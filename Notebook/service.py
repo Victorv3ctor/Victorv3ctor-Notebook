@@ -1,0 +1,88 @@
+
+class Note:
+    def __init__(self, no, title, description, date, tag):
+        self.no = no
+        self.title = title
+        self.description = description
+        self.date = date
+        self.tag = tag
+
+    def to_dict(self):
+        return {'id':self.no ,'title':self.title, 'description':self.description, 'date':self.date, 'tag':self.tag}
+
+
+class Notebook:
+    def __init__(self):
+        self.notes = []
+
+    def add(self,note):
+        self.notes.append(note)
+
+    def get_id(self):
+        if len(self.notes) > 0:
+            numbers = [int(note.no) for note in self.notes]
+            highest = max(numbers)
+            return highest + 1
+        return 1
+
+    def find_print_id(self):
+        for note in self.notes:
+            print(f'ID[{note.no}]\nTITLE: {note.title}')
+        return bool(self.notes)
+
+    def find_check_no(self, no):
+        for note in self.notes:
+            if no == int(note.no):
+                return True
+        return False
+
+    def find_print_note(self, no):
+        for note in self.notes:
+            if no == int(note.no):
+                print(f"""
+=ID[{note.no}]=
+===TITLE===
+{note.title}
+{note.description}
+Date: {note.date}
+Tag: {note.tag}
+----------""")
+
+    @staticmethod
+    def find_menu():
+        option = True
+        choose = int(input('1 TRY AGAIN  |  2 CANCEL : '))
+        if choose == 2:
+            option = False
+        return option
+
+    def show(self):
+        for note in self.notes:
+            print(f"""
+=ID[{ note.no}]=
+===TITLE===
+{note.title}
+{note.description}
+Date: {note.date}
+Tag: {note.tag}
+----------""")
+        return bool(self.notes)
+
+    def edit(self,no,x,value):
+        for note in self.notes:
+            if int(note.no) == int(no):
+                setattr(note,x,value) # setattr -> ustawia atrybut X obiektu NOTE na wawrtosc Value
+            #uzywamy go gdy chcemy zmienic atrybut obiektu dynamicznie i gdy nie jest przypisany na sztywno
+            #pozwala uniknac ifow i pozwala obiektowi (note) nadpisac okreslony atrybut (x) np.title na nowa wartosc (value) wybrana przez uzytkownika np.hej
+                return True
+        return False
+
+
+    def delete_note(self, no):
+        for note in self.notes:
+            if int(note.no) == no:
+                self.notes = [note for note in self.notes if int(note.no) != no]
+                return True
+        return False
+
+
