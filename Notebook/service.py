@@ -75,16 +75,8 @@ Tag: {note.tag}
 
     @staticmethod
     def edit_key(choose):
-        key = ''
-        if choose == 1:
-            key = 'title'
-        elif choose == 2:
-            key = 'description'
-        elif choose == 3:
-            key = 'date'
-        elif choose == 4:
-            key = 'tag'
-        return key
+        keys = {1: "title", 2: "description", 3: "date", 4: "tag"}
+        return keys.get(choose, '')
 
     @staticmethod
     def edit(note,key,value):

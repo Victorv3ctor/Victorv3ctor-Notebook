@@ -12,7 +12,7 @@ class NotebookStorage:
                 note = Note(row['id'], row['title'], row['description'], row['date'], row['tag'])
                 notebook.add(note)
         return notebook
-            #notebook storage
+
 
     @staticmethod
     def to_file(notebook, filename):
