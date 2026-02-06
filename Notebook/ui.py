@@ -1,6 +1,5 @@
 from Notebook.service import Note
 from Notebook.storage import NotebookStorage
-
 class Menu:
     def __init__(self):
         notebookstorage = NotebookStorage()
@@ -45,31 +44,47 @@ class Menu:
                                     self.notebook.find_print_note(no)
                                     if self.notebook.find_menu():
                                         continue
-                                    else:
-                                        break
-                                else:
-                                    print("WRONG ID")
-                                    if self.notebook.find_menu():
-                                        continue
-                                    else:
-                                        break
+                                    break
+                                print("WRONG ID")
+                                if self.notebook.find_menu():
+                                    continue
+                                break
                         except ValueError:
                             print('INCORRECT TYPE OF ID')
                     elif choice == 4:
-                        if not self.notebook.show():
-                            print('NOTEBOOK IS EMPTY')
-                            continue
-                        else:
+                        while True:
+                            if not self.notebook.show():
+                                print('NOTEBOOK IS EMPTY')
+                                break
                             try:
-                                no = int(input('CHOOSE ID TO EDIT: '))
-                                x = input(f'\nTITLE\nDESCRIPTION\nDATE\nTAG\nCHOOSE COLUMN: ')
-                                value = input('NEW VALUE: ')
-                                if self.notebook.edit(no, x , value):
-                                    print("CHANGE SAVED")
-                                else:
-                                    print('SOMETHING WENT WRONG')
+                                no = int(input("CHOOSE ID: "))
+                                note = self.notebook.edit_check_no(no)
                             except ValueError:
-                                print('INCORRECT TYPE OF ID')
+                                print('WRONG TYPE OF ID')
+                                break
+                            if not note:
+                                print('WRONG ID CHOSEN')
+                                if not self.notebook.find_menu():
+                                    break
+                                continue
+                            try:
+                                choose = int(input(f'\n1 TITLE\n2 DESCRIPTION\n3 DATE\n4 TAG\nCHOOSE COLUMN: '))
+                                key = self.notebook.edit_key(choose)
+                                if not key:
+                                    print('WRONG FIELD CHOSEN')
+                                    if not self.notebook.find_menu():
+                                        break
+                                    continue
+                                value = input(f'{key.upper()} NEW VALUE: ')
+                                if self.notebook.edit(note, key, value):
+                                    print("CHANGE SAVED")
+                                    break
+                                print('SOMETHING WENT WRONG')
+                            except ValueError:
+                                print('INCORRECT TYPE OF COLUMN')
+                                if self.notebook.find_menu():
+                                    continue
+                                break
                     elif choice == 5:
                         try:
                             if not self.notebook.show():

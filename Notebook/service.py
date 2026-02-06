@@ -1,4 +1,3 @@
-
 class Note:
     def __init__(self, no, title, description, date, tag):
         self.no = no
@@ -68,15 +67,29 @@ Tag: {note.tag}
 ----------""")
         return bool(self.notes)
 
-    def edit(self,no,x,value):
+    def edit_check_no(self, no):
         for note in self.notes:
-            if int(note.no) == int(no):
-                setattr(note,x,value) # setattr -> ustawia atrybut X obiektu NOTE na wawrtosc Value
-            #uzywamy go gdy chcemy zmienic atrybut obiektu dynamicznie i gdy nie jest przypisany na sztywno
-            #pozwala uniknac ifow i pozwala obiektowi (note) nadpisac okreslony atrybut (x) np.title na nowa wartosc (value) wybrana przez uzytkownika np.hej
-                return True
+            if no == int(note.no):
+                return note
         return False
 
+    @staticmethod
+    def edit_key(choose):
+        key = ''
+        if choose == 1:
+            key = 'title'
+        elif choose == 2:
+            key = 'description'
+        elif choose == 3:
+            key = 'date'
+        elif choose == 4:
+            key = 'tag'
+        return key
+
+    @staticmethod
+    def edit(note,key,value):
+        setattr(note,key,value)
+        return True
 
     def delete_note(self, no):
         for note in self.notes:
