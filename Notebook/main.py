@@ -1,8 +1,9 @@
-from ui import Menu
+from ui import UI
 
-menu = Menu()
+
+ui = UI()
 try:
-    menu.run()
+    ui.run()
 except KeyboardInterrupt:
     print(f'\nProgram zakonczony dzialanem spoza MENU')
 #

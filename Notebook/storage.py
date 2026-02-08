@@ -1,6 +1,7 @@
 import csv
 
-from service import Notebook, Note
+from notebook import Notebook
+from note import Note
 
 class NotebookStorage:
     @staticmethod
@@ -10,7 +11,7 @@ class NotebookStorage:
             reader = csv.DictReader(file)
             for row in reader:
                 note = Note(row['id'], row['title'], row['description'], row['date'], row['tag'])
-                notebook.add(note)
+                notebook.add_note(note)
         return notebook
 
 
@@ -21,3 +22,4 @@ class NotebookStorage:
             writer.writeheader()
             for note in notebook.notes:
                 writer.writerow(note.to_dict())
+
