@@ -14,7 +14,6 @@ class NotebookStorage:
                 notebook.add_note(note)
         return notebook
 
-
     @staticmethod
     def to_file(notebook, filename):
         with open(filename, 'w') as file:
