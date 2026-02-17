@@ -5,7 +5,19 @@ from Notebook.storage import NotebookStorage
 class UI:
     def __init__(self):
         notebookstorage = NotebookStorage()
-        self.notebook = notebookstorage.from_file('notebook.csv')
+        self.notebook = notebookstorage.from_file('notebook.json')
+
+    @staticmethod
+    def show_menu():
+        return(f"==MENU==\n"
+        "1 ADD NOTE\n"
+        "2 NOTEBOOK\n"
+        "3 FIND\n"
+        "4 EDIT\n"
+        "5 DELETE\n"
+        "6 SAVE\n"
+        "7 EXIT\n"
+               )
 
     @staticmethod
     def mini_menu():    #PRZENIESC DO UI
@@ -20,17 +32,23 @@ class UI:
         except ValueError:
             print('INNCORECT OPTION TYPE')
 
-    @staticmethod
-    def show_menu():
-        return(f"==MENU==\n"
-        "1 ADD NOTE\n"
-        "2 NOTEBOOK\n"
-        "3 FIND\n"
-        "4 EDIT\n"
-        "5 DELETE\n"
-        "6 SAVE\n"
-        "7 EXIT\n"
-               )
+    def choose_note(self):
+        if not self.notebook.check_notebook_len():
+            print('NOTEBOOK IS EMPTY')
+            return None
+        for note in self.notebook.notes:
+            print(f"ID -{note.note_id}-\nTITLE: {note.title}")
+        try:
+            note_id = int(input('CHOOSE ID: '))
+        except ValueError:
+            print("WRONG TYPE OF ID")
+            return None
+        note = self.notebook.get_note_by_id(note_id)
+        if not note:
+            print('ID NOT FOUND')
+            return None
+        return note
+
 
     def handle_add_note(self):
         note_id = self.notebook.create_new_id()
@@ -44,92 +62,50 @@ class UI:
     def handle_show_notebook(self):
         if not self.notebook.check_notebook_len():
             print('NOTEBOOK IS EMPTY')
-
-        notes = self.notebook.display_notebook()
-        for note in notes:
+            return
+        for note in self.notebook.notes:
             print(note)
 
     def handle_find_note(self):
-        try:
-            while True:
-                if not self.notebook.check_notebook_len():
-                    print('NOTEBOOK IS EMPTY')
-                    break
-                notes = self.notebook.display_find_filter()
-                for note in notes:
-                    print(note)
-                note_id = int(input("CHOSE ID: "))
-                note = self.notebook.get_note_by_id(note_id)
-                if not note:
-                    print("ID NOT FOUND")
-                    break
-                print(self.notebook.display_note(note))
-                if self.mini_menu():
-                    continue
-                break
-        except ValueError:
-            print('WRONG TYPE OF ID')
+        while True:
+            note = self.choose_note()
+            if not note:
+                return
+            print(note)
+            if self.mini_menu():
+                continue
+            return
 
     def handle_edit_note(self):
         while True:
-            if not self.notebook.check_notebook_len():
-                print('NOTEBOOK IS EMPTY')
-                break
-            notes = self.notebook.display_notebook()
-            for note in notes:
-                print(note)
-            try:
-                note_id = int(input('CHOOSE ID: '))
-                note = self.notebook.get_note_by_id(note_id)
-            except ValueError:
-                print('WRONG TYPE OF ID')
-                break
+            note = self.choose_note()
             if not note:
-                print('ID NOT FOUND')
-                break
+                return
+            print(note)
             try:
-                choose = int(input(f'\n1 TITTLE\n2 DESCRIPTION\n3 DATE\n4 TAG\nCHOOSE COLUMN: '))
-                key = self.notebook.get_edit_key(choose)
+                choose_key = int(input(f'\n1 TITTLE\n2 DESCRIPTION\n3 DATE\n4 TAG\nCHOOSE EDIT COLUMN: '))
+                key = self.notebook.get_edit_key(choose_key)
                 if not key:
                     print('WRONG FIELD CHOSEN')
-                    if not self.mini_menu():
-                        break
-                    continue
+                    return
                 value = input(f'{key.upper()} NEW VALUE: ')
                 if self.notebook.make_edit(note, key, value):
                     print("CHANGE SAVED")
                     break
             except ValueError:
                 print("INCORRECT TYPE OF COLUMN")
-                if self.mini_menu():
-                    continue
-                break
+                return
 
     def handle_delete_note(self):
-        if not self.notebook.check_notebook_len():
-            print("NOTEBOOK IS EMPTY")
-        try:
-            notes = self.notebook.display_notebook()
-            for note in notes:
-                print(note)
-            chosen_id = int(input("CHOOSE NOTE ID: "))
-            delete_note = self.notebook.get_note_by_id(chosen_id)
-            if not delete_note:
-                print('ID NOT FOUND')
-                return
-            self.notebook.delete_note(delete_note)
-            print('NOTED DELETED')
-        except ValueError:
-            print('WRONG TYPE OF ID')
+        note = self.choose_note()
+        if not note:
+            return
+        self.notebook.delete_note(note)
+        print('NOTED DELETED')
 
     def handle_update(self):
-        NotebookStorage.to_file(self.notebook, 'notebook.csv')
+        NotebookStorage.to_file(self.notebook, 'notebook.json')
         print("\nUPDATE SAVED")
-
-    @staticmethod
-    def handle_exit():
-        print('GOOD BYE!!!')
-        return
 
     def run(self):
         options = {

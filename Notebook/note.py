@@ -8,3 +8,14 @@ class Note:
 
     def to_dict(self):
         return {'id':self.note_id ,'title':self.title, 'description':self.description, 'date':self.date, 'tag':self.tag}
+
+    def __str__(self):
+        return (f"""
+=ID[{self.note_id}]=
+===TITTLE===
+{self.title}
+{self.description}
+Date: {self.date}
+Tag: {self.tag.upper()}
+----------\n"""
+        )

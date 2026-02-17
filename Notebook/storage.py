@@ -1,4 +1,4 @@
-import csv
+import json
 
 from notebook import Notebook
 from note import Note
@@ -7,18 +7,20 @@ class NotebookStorage:
     @staticmethod
     def from_file(filename):
         notebook = Notebook()
-        with open(filename) as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                note = Note(row['id'], row['title'], row['description'], row['date'], row['tag'])
-                notebook.add_note(note)
+        try:
+            with open(filename) as file:
+                data = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = []
+        for note in data:
+            note = Note(note['id'], note['title'], note['description'], note['date'], note['tag'])
+            notebook.add_note(note)
         return notebook
 
     @staticmethod
     def to_file(notebook, filename):
         with open(filename, 'w') as file:
-            writer = csv.DictWriter(file,fieldnames = ['id', 'title', 'description', 'date', 'tag'])
-            writer.writeheader()
-            for note in notebook.notes:
-                writer.writerow(note.to_dict())
+            json_data = [note.to_dict() for note in notebook.notes]
+            json.dump(json_data, file, indent = 4)
+
 

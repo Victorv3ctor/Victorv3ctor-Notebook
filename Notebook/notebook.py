@@ -20,29 +20,10 @@ class Notebook:
             if note_id == int(note.note_id):
                 return note
         return None
-
     @staticmethod
-    def display_note(note):
-        return(f"""
-=ID[{note.note_id}]=
-===TITTLE===
-{note.title}
-{note.description}
-Date: {note.date}
-Tag: {note.tag.upper()}
-----------""")
-
-    def display_notebook(self):
-        return [self.display_note(note) for note in self.notes]
-
-    def display_find_filter(self):
-        return [f'[{note.note_id}]\nTITLE {note.title}'
-                for note in self.notes]
-
-    @staticmethod
-    def get_edit_key(choose):
+    def get_edit_key(choose_key):
         keys = {1: "title", 2: "description", 3: "date", 4: "tag"}
-        return keys.get(choose, '')
+        return keys.get(choose_key, '')
 
     @staticmethod
     def make_edit(note,key,value):
