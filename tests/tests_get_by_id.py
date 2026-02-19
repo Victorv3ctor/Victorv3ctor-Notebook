@@ -2,58 +2,36 @@ from Notebook.notebook import Notebook
 from Notebook.note import Note
 import pytest
 
-# def get_note_by_id(self, note_id):
-#     for note in self.notes:
-#         if note_id == int(note.note_id):
-#             return note
-#     return None
 
-# @pytest.mark.parametrize('test_input, expected', [
-#     (2, True), (1, False), (10, False), (0, False), (-1, False)])
-# def test_check_move(test_input, expected):
-#     board = Board()
-#     board.game_board[0] = 'x'
-#
-#     assert board.check_move(test_input) is expected
+@pytest.mark.parametrize('notes_list, test_input, expected_obj, expected_note_id, expected_note_title', [
+    #empty self.notes
+    ([], 1, None),
 
-#self.notes = []
-def test_get_id_empty():
+    #self.notes 1 note
+    ([Note(1,'hi','description','date','tag')], 1, Note, 1,'hi'),
 
-    notebook = Notebook()
-    notebook.notes = []
+    #note.id str
+    ([Note("2",'hi1','description','date','tag')], 2, Note, 2,'hi1'),
 
-    note = notebook.get_note_by_id(1)
-    assert note is None
+    #wrong user_input_id
+    ([Note(1,'hi2','description','date','tag')],3, None, None,None)
+])
 
-
-#self.notes = [Note]
-def test_get_id():
+def test_get_note_by_id(notes_list, test_input, expected_obj, expected_note_id, expected_note_title):
 
     notebook = Notebook()
-    notebook.notes = [
-        Note(1,'title','description','date','tag')
-    ]
+    notebook.notes = notes_list
 
-    note = notebook.get_note_by_id(1)
-    assert isinstance(note, Note)
-    assert note.note_id == 1
-    assert note.title == 'title'
-    assert not note is None
+    note = notebook.get_note_by_id(test_input)
 
-#self.notes = [Note]
-def test_get_id_str():
+    if expected_obj is None:
+        assert note is None
 
-    notebook = Notebook()
+    assert isinstance(note, expected_obj)
+    assert int(note.note_id) == expected_note_id
+    assert note.title == expected_note_title
+    assert note is not None
 
-    notebook.notes = [
-        Note("2",'title2','description','date','tag')
-    ]
-
-    note = notebook.get_note_by_id(2)
-    assert isinstance(note, Note)
-    assert int(note.note_id) == 2
-    assert note.title == 'title2'
-    assert not note is None
 
 
 

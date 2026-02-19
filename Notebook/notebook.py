@@ -23,7 +23,7 @@ class Notebook:
     @staticmethod
     def get_edit_key(choose_key):
         keys = {1: "title", 2: "description", 3: "date", 4: "tag"}
-        return keys.get(choose_key, '')
+        return keys.get(choose_key, False)
 
     @staticmethod
     def make_edit(note,key,value):
