@@ -1,9 +1,10 @@
 import json
 
-from notebook import Notebook
-from note import Note
+from Notebook.notebook import Notebook
+from Notebook.note import Note
 
 class NotebookStorage:
+
     @staticmethod
     def from_file(filename):
         notebook = Notebook()

@@ -6,10 +6,10 @@ class Note:
         self.date = date
         self.tag = tag
 
-    def to_dict(self):
+    def to_dict(self): # to make test
         return {'id':self.note_id ,'title':self.title, 'description':self.description, 'date':self.date, 'tag':self.tag}
 
-    def __str__(self):
+    def __str__(self): # to make test
         return (f"""
 =ID[{self.note_id}]=
 ===TITTLE===

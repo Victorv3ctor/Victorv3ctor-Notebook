@@ -5,7 +5,7 @@ import pytest
 
 @pytest.mark.parametrize('notes_list, test_input, expected_obj, expected_note_id, expected_note_title', [
     #empty self.notes
-    ([], 1, None),
+    ([], 1, None, None, None),
 
     #self.notes 1 note
     ([Note(1,'hi','description','date','tag')], 1, Note, 1,'hi'),
@@ -26,6 +26,8 @@ def test_get_note_by_id(notes_list, test_input, expected_obj, expected_note_id, 
 
     if expected_obj is None:
         assert note is None
+        return
+
 
     assert isinstance(note, expected_obj)
     assert int(note.note_id) == expected_note_id
