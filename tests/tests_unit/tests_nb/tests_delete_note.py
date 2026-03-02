@@ -1,32 +1,31 @@
 from Notebook.notebook import Notebook
 from Notebook.note import Note
+import pytest
 
-def test_delete_note_correct():
+@pytest.mark.parametrize('notes, delete_note_id, expected_len_notes', [
+    ([Note(1,'t','d','d','t')], 1, 0),
+
+    ([Note(2,'t','d','d','t')],1, 1),
+
+    ([
+        Note(1,'t','d','d','t'),
+        Note(2,'t','d','d','t')], 3, 2),
+
+    ([Note(2, 't', 'd', 'd', 't')], 0, 1),
+])
+
+def test_delete_note(notes, delete_note_id, expected_len_notes):
     notebook = Notebook()
+    notebook.notes = notes
 
-    note = Note(1,'t','d','d','t')
-    note1 = Note(2,'t','d','d','t')
+    note = notebook.get_note_by_id(delete_note_id)
 
-    notebook.notes = [note,note1]
-    assert len(notebook.notes) == 2
-    notebook.delete_note(note)
+    if note:
+        notebook.delete_note(note)
+    elif note is None:
+        assert note is None
 
-    assert note not in notebook.notes
-    assert len(notebook.notes) == 1
-
-
-
-def test_delete_note_incorrect():
-    notebook = Notebook()
-
-    note = Note(1,'t','d','d','t')
-    note1 = Note(2,'t','d','d','t')
-    note3 = Note(1,'t','d','d','t')
-
-    notebook.notes = [note,note1]
-    notebook.delete_note(note3)
-
-    assert len(notebook.notes) == 2
+    assert len(notebook.notes) == expected_len_notes
 
 
 

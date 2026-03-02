@@ -1,36 +1,49 @@
 from Notebook.notebook import Notebook
 from Notebook.note import Note
+import pytest
+
+@pytest.fixture
+def nb():
+    return Notebook()
+
+def test_empty_notebook_add_note(nb):
+    assert len(nb.notes) == 0
+
+    note = Note(1, 't', 'd', 'd', 't')
+
+    nb.add_note(note)
+
+    assert len(nb.notes) == 1
+    assert nb.notes[0].title == 't'
+    assert nb.notes[0].note_id == 1
+
+def test_filled_notebook_add_note(nb):
+    assert len(nb.notes) == 0
+
+    note = Note(1,'t1','d','d','java')
+    nb.add_note(note)
+
+    assert len(nb.notes) == 1
+
+    note1 = Note(2,'t2','d2','d3','python')
+
+    nb.add_note(note1)
+
+    assert len(nb.notes) == 2
+
+    assert nb.notes[0].note_id == 1
+    assert nb.notes[0].title == 't1'
+    assert nb.notes[1].note_id == 2
+    assert nb.notes[1].title == 't2'
 
 
-#add note to empty self.notes
-def test_add_note_empty_notes():
-    notebook = Notebook()
-    #check with notebook.note starts empty
-    assert notebook.notes == []
-
-    note = Note(1,'t','d','d','t')
-
-    notebook.add_note(note)
-    assert note in notebook.notes
-
-#add note to self.notes with existing notes
-def test_add_note_existing_notes():
-
-    notebook = Notebook()
-    #check if notebook.notes starts empty
-    assert notebook.notes == []
-
-    note = Note(2,'title','desc','date','tag')
-    note1 = Note(3,'title1','desc1','date1','tag1')
 
 
-    notebook.add_note(note)
 
-    notebook.add_note(note1)
 
-    assert note in notebook.notes
-    assert note1 in notebook.notes
-    assert len(notebook.notes) == 2
+
+
+
 
 
 

@@ -1,10 +1,22 @@
-from Notebook.note import Note
-from Notebook.storage import NotebookStorage
-
 class UI:
-    def __init__(self):
-        self.storage = NotebookStorage()
-        self.notebook = self.storage.from_file('notebook.json')
+    def __init__(self, service):
+        self.service = service
+
+    @staticmethod
+    def print_if_empty(notes):
+        if not notes:
+            print('NOTEBOOK IS EMPTY')
+            return True
+        return False
+
+    @staticmethod  # tested
+    def get_int_input(message, error_msg):  # tested
+        try:
+            return int(input(message))
+        except ValueError:
+
+            print(error_msg)
+            return None
 
     @staticmethod
     def show_menu():
@@ -18,121 +30,89 @@ class UI:
         "7 EXIT\n"
                )
 
-    def mini_menu(self): #tested
-        choose = self._get_int_input("1 TRY AGAIN\n2 CANCEL\nCHOOSE MENU OPTION: ", "WRONG TYPE OF OPTION")
-        if choose == 1:
-            return True
-        elif choose == 2:
-            return False
-        print("WRONG OPTION")
-        return False
-
-    @staticmethod #tested
-    def _get_int_input(message, error_msg): #tested
-        try:
-            return int(input(message))
-        except ValueError:
-            print(error_msg)
+    def show_and_choose_note(self):
+        notes = self.service.get_notes()
+        if self.print_if_empty(notes):
             return None
-
-    def choose_note(self): #tested
-        notes = self.notebook.get_notes()
-        if not notes:
-            print('NOTEBOOK IS EMPTY')
-            return None
-        for line in notes:
-            print(f"ID -{line.note_id}-\nTITLE: {line.title}\n")
-        note_id = UI._get_int_input('CHOOSE YOUR NOTE ID: ', 'WRONG TYPE OF ID')
-        note_by_id = self.notebook.get_note_by_id(note_id)
+        for note in notes:
+            print(note)
+        note_id = self.get_int_input('CHOOSE NOTE: ', 'WRONG TYPE OF NOTE ID')
+        note_by_id = self.service.choose_note_by_id(note_id)
         if not note_by_id:
             print('ID NOT FOUND')
             return None
         return note_by_id
 
-
-    def handle_add_note(self): #tested
-        note_id = self.notebook.create_new_id()
-        title = input('TITLE: ')
-        description = input('DESCRIPTION: ')
-        date = input('DATE: ')
-        tag = input('TAG: ')
-        note = Note(note_id, title, description, date, tag)
-        self.notebook.add_note(note)
-
-    def handle_show_notebook(self): # TO BE CONTINUED
-        if not self.notebook.get_notes():
-            print('NOTEBOOK IS EMPTY')
-            return
-        for note in self.notebook.notes:
-            print(note)
-
-    def handle_find_note(self):
+    def run(self):
         while True:
-            note = self.choose_note()
-            if not note:
-                return
-            print(note)
-            if self.mini_menu():
-                continue
-            return
+            print(self.show_menu())
+            option = UI.get_int_input('CHOOSE NOTEBOOK OPTION: ', "WRONG TYPE OF MENU OPTION")
 
-    def handle_edit_note(self):
-        while True:
-            note = self.choose_note()
-            if not note:
-                return
-            print(note)
-            choose_key = (self._get_int_input(
+            if option == 1:
+                title = input('TITLE: ')
+                description = input('DESCRIPTION: ')
+                date = input('DATE: ')
+                tag = input('TAG: ')
+                self.service.add_note(title,description,date,tag)
 
+            elif option == 2:
+                notes = self.service.get_notes()
+                if self.print_if_empty(notes):
+                    continue
+                for note in notes:
+                    print(note)
+
+            elif option == 3:
+                note_by_id = self.show_and_choose_note()
+                if not note_by_id:
+                    continue
+                print(note_by_id)
+
+            elif option == 4:
+                note = self.show_and_choose_note()
+                if not note:
+                    continue
+                edit_map = {
+                    1: 'title',
+                    2: 'description',
+                    3: 'date',
+                    4: 'tag'
+                }
+                key = self.get_int_input(
 "\n1 TITLE"
 "\n2 DESCRIPTION"
 "\n3 DATE"
 "\n4 TAG"
-"\nCHOOSE EDIT KEY: ", "INCORRECT TYPE OF KEY"))
-            key = self.notebook.get_edit_key(choose_key)
-            if not key:
-                print('WRONG KEY CHOSEN')
-                return
-            value = input(f'{key.upper()} NEW VALUE: ')
-            self.notebook.make_edit(note, key, value)
-            print("CHANGE SAVED")
-            break
+"\nCHOOSE EDIT KEY: ", "INCORRECT TYPE OF KEY")
+                if key not in edit_map:
+                    print("INCORRECT COLUMN")
+                    continue
+                value = input('NEW VALUE: ')
+                self.service.edit_note(note, key, value)
 
-    def handle_delete_note(self):
-        note = self.choose_note()
-        if not note:
-            return
-        self.notebook.delete_note(note)
-        print('NOTED DELETED')
+            elif option == 5:
+                notes = self.service.get_notes()
+                if self.print_if_empty(notes):
+                    continue
+                for note in notes:
+                    print(note)
+                note_by_id = self.get_int_input('CHOOSE NOTE: ', 'WRONG TYPE OF NOTE ID')
+                note = self.service.choose_note_by_id(note_by_id)
+                if self.service.delete_note(note):
+                    print('NOTE DELETED')
+                    continue
+                print('ID NOT FOUND')
 
-    def handle_update(self):
-        self.storage.to_file(self.notebook, 'notebook.json')
-        print("\nUPDATE SAVED")
-
-
-    def run(self):
-        options = {
-            1: self.handle_add_note,
-            2: self.handle_show_notebook,
-            3: self.handle_find_note,
-            4: self.handle_edit_note,
-            5: self.handle_delete_note,
-            6: self.handle_update,
-            7: None
-        }
-
-        while True:
-            print(self.show_menu())
-            option = self._get_int_input('CHOOSE NOTEBOOK OPTION: ', "WRONG TYPE OF MENU OPTION")
-            if option is None:
-                continue
-            if option == 7:
+            elif option == 6: self.service.update_notebook()
+            elif option == 7: break
+            else:
+                print('WRONG MENU OPTION')
                 break
-            action = options.get(option)
-            if not action:
-                print("WRONG MENU OPTION")
-                continue
-            action()
+
+
+
+
+
 
 
 
